@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
+import * as XLSX from 'xlsx';
 import { AccessControlConstants, Show } from "@wso2is/access-control";
 import { CommonHelpers } from "@wso2is/core/helpers";
 import { 
