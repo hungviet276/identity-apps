@@ -15,7 +15,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import moment from 'moment';
 import * as XLSX from 'xlsx';
+import FileSaver, { saveAs } from "file-saver";
+import axios, { AxiosRequestConfig } from 'axios';
+import fs from 'fs';
+import { HttpMethods } from "@wso2is/core/models";
 import { AccessControlConstants, Show } from "@wso2is/access-control";
 import { CommonHelpers } from "@wso2is/core/helpers";
 import { 
@@ -48,7 +53,8 @@ import {
     UserBasicInterface,
     getAUserStore,
     getEmptyPlaceholderIllustrations,
-    store
+    store,
+    UserInterface
 } from "../../core";
 import { RootOnlyComponent } from "../../organizations/components";
 import { OrganizationUtils } from "../../organizations/utils";
@@ -73,6 +79,7 @@ import { getUsersList } from "../api";
 import { AddUserWizard, UsersList, UsersListOptionsComponent } from "../components";
 import { UserManagementConstants } from "../constants";
 import { UserListInterface } from "../models";
+import { UserListTestInterface } from "../models";
 
 interface UserStoreItem {
     key: number;
@@ -127,7 +134,9 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
     const [ emailVerificationEnabled, setEmailVerificationEnabled ] = useState<boolean>(undefined);
     const [ isNextPageAvailable, setIsNextPageAvailable ] = useState<boolean>(undefined);
     const [ realmConfigs, setRealmConfigs ] = useState<RealmConfigInterface>(undefined);
-
+    const [ usersBasisList, setUsersBasicList ] = useState<UserListTestInterface[]>([]);
+    const [ usersBasisTestList, setUsersBasicTestList ] = useState<UserListTestInterface[]>([]);
+    const [ isUserListLoading, setUserListLoading ] = useState<boolean>(false);
     const init : MutableRefObject<boolean> = useRef(true);
 
     const username: string = useSelector((state: AppState) => state.auth.username);
@@ -208,6 +217,160 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
             });
     };
 
+    const exportListUser = () => {
+        const arrayUser = [];
+        setUserListLoading(true);
+        const limit = 1000;
+        const offset = 0;
+        const filter = null;
+        const attribute = null;
+        const domain = null;
+        const modifiedLimit : number = limit + TEMP_RESOURCE_LIST_ITEM_LIMIT_OFFSET;
+        let num : number = 0;
+        getUsersList(modifiedLimit, offset, filter, attribute, domain)
+            .then((response: UserListInterface) => {
+                const data: UserListInterface = { ...response };
+            
+                data.Resources = data?.Resources?.map((resource: UserBasicInterface) => {
+                  
+                    num = num +1;
+                    // console.log(userInterface)
+                    console.log(resource)
+                    console.log(resource.id)
+                    console.log(resource.userName)
+                    const familyName:string = "name" in resource?resource.name.familyName:"";           
+                    const givenName:string = "name" in resource?resource.name.givenName:"";       
+                    const roleStr = resource.roles.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1);
+                    console.log(roleStr)
+                    const created = resource.meta.created !== undefined ?moment(resource.meta.created).format('DD/MM/YYYY HH:mm:ss'):"";           
+                    const lastModified = resource.meta.lastModified !== undefined ?moment(resource.meta.lastModified).format('DD/MM/YYYY HH:mm:ss'):""; 
+                    console.log(created)
+                    console.log(lastModified)
+                    let emailStr: string| MultiValueAttributeInterface = null;
+                    if (resource?.emails instanceof Array) {
+                    emailStr = resource?.emails[0];
+                    }
+                    console.log(emailStr)
+                    const groupStr = resource.groups.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1);
+                    console.log(groupStr)
+                
+                    const userTest: UserInterface = {
+                        number: num,
+                        id: resource.id,
+                        userName: resource.userName,
+                        familyName :familyName,
+                        givenName : givenName,
+                        email: emailStr,
+                        roles: roleStr,
+                        group: groupStr,
+                        created: created,
+                        lastModified: lastModified
+                      };
+              
+                    // setUsersBasicList(usersBasisList => [
+                    //     ...usersBasisList,
+                    //     {    id: resource.id,
+                    //         userName: resource.userName,
+                    //         familyName :familyName,
+                    //         givenName : givenName,
+                    //         email: emailStr,
+                    //         roles: roleStr,
+                    //         group: groupStr,
+                    //         created: created,
+                    //         lastModified: lastModified}
+                    //   ])
+                      arrayUser.push(userTest)
+                 
+                      console.log(userTest);
+                    const userStore: string = resource.userName.split("/").length > 1
+                        ? resource.userName.split("/")[0]
+                        : "Primary";
+
+                    if (userStore !== CONSUMER_USERSTORE) {
+                        let email: string = null;
+
+                        if (resource?.emails instanceof Array) {
+                            const emailElement: string | MultiValueAttributeInterface = resource?.emails[0];
+
+                            if (typeof emailElement === "string") {
+                                email = emailElement;
+                            } else {
+                                email = emailElement?.value;
+                            }
+                        }
+
+                        resource.emails = [ email ];
+
+                        return resource;
+                    } else {
+                        const resources: UserBasicInterface[] = [ ...data.Resources ];
+
+                        resources.splice(resources.indexOf(resource), 1);
+                        data.Resources = resources;
+                    }
+               
+          
+                });
+                
+                setUsersList(moderateUsersList(data, modifiedLimit, TEMP_RESOURCE_LIST_ITEM_LIMIT_OFFSET));
+                setUserStoreError(false);
+                const outputFilename = `list_user_${Date.now()}`;
+
+                exportToCSV(arrayUser,outputFilename);
+          
+           
+            }).catch((error: AxiosError) => {
+                if (error?.response?.data?.description) {
+                    dispatch(addAlert({
+                        description: error?.response?.data?.description ?? error?.response?.data?.detail
+                            ?? t("console:manage.features.users.notifications.fetchUsers.error.description"),
+                        level: AlertLevels.ERROR,
+                        message: error?.response?.data?.message
+                            ?? t("console:manage.features.users.notifications.fetchUsers.error.message")
+                    }));
+
+                    return;
+                }
+
+                dispatch(addAlert({
+                    description: t("console:manage.features.users.notifications.fetchUsers.genericError." +
+                        "description"),
+                    level: AlertLevels.ERROR,
+                    message: t("console:manage.features.users.notifications.fetchUsers.genericError.message")
+                }));
+
+                setUserStoreError(true);
+                setUsersList({
+                    Resources: [],
+                    itemsPerPage: 10,
+                    links: [],
+                    startIndex: 1,
+                    totalResults: 0
+                });
+            })
+            .finally(() => {
+                setUserListLoading(false);
+          
+            });
+    };
+
+    const 
+    exportToCSV = (csvData, fileName) => {
+        const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const fileExtension = '.xlsx';
+
+        const ws = XLSX.utils.json_to_sheet(csvData);
+        const wb = {Sheets: {'data': ws}, SheetNames: ['data']};  
+        const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});      
+        
+        // let readUTF8 = excelBuffer.toString('utf8')
+        const data = new Blob([excelBuffer], {type: fileType});
+        FileSaver.saveAs(data, fileName + fileExtension);
+}
+
+
+
+
     useEffect(() => {
         if (init.current) {
             init.current = false;
@@ -217,7 +380,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
             }
         }
     }, [ emailVerificationEnabled ]);
-
+useState
     useEffect(() => {
         if (!OrganizationUtils.isCurrentOrganizationRoot()) {
             return;
@@ -552,6 +715,14 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
                         >
                             <Icon name="add"/>
                             { t("console:manage.features.users.buttons.addNewUserBtn") }
+                        </PrimaryButton>
+
+                        <PrimaryButton
+                            data-testid="user-mgt-user-list-add-user-button"
+                            onClick={ () => exportListUser()  }
+                        >
+                            <Icon name="file excel"/>
+                            { t("Export") }
                         </PrimaryButton>
                     </Show>
                 )

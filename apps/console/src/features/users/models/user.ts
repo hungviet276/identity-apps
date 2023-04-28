@@ -91,6 +91,18 @@ export interface UserListInterface {
     links?: LinkInterface[];
 }
 
+export interface UserListTestInterface {
+    id?: string;
+    userName?: string;
+    familyName? :string;
+    givenName? : string;
+    email?: string| MultiValueAttributeInterface;
+    roles?: string;
+    group?: string;
+    created?: string;
+    lastModified?: string;
+}
+
 /**
  *  Captures Internal user list properties.
  */

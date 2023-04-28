@@ -8338,6 +8338,7 @@ export const console: ConsoleNS = {
                 },
                 buttons: {
                     addNewUserBtn: "Nouvel Utilisateur",
+                    // exportUserBtn : "Export",
                     assignUserRoleBtn: "Assigner un rôle",
                     metaColumnBtn: "Champs"
                 },

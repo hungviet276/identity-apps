@@ -2849,6 +2849,7 @@ export interface ConsoleNS {
                 };
                 buttons: {
                     addNewUserBtn: string;
+                    // exportUserBtn: string;
                     assignUserRoleBtn: string;
                     metaColumnBtn: string;
                 };

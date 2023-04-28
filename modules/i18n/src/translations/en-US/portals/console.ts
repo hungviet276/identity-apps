@@ -9959,6 +9959,7 @@ export const console: ConsoleNS = {
                 },
                 buttons: {
                     addNewUserBtn: "New User",
+                    // exportUserBtn : "Export",
                     assignUserRoleBtn: "Assign roles",
                     metaColumnBtn: "Columns"
                 },

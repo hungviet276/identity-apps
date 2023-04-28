@@ -8154,6 +8154,7 @@ export const console: ConsoleNS = {
                 },
                 buttons: {
                     addNewUserBtn: "නව පරිශීලක",
+                    // exportUserBtn : "Export",
                     assignUserRoleBtn: "භූමිකාවන් පවරන්න",
                     metaColumnBtn: "තීරු"
                 },

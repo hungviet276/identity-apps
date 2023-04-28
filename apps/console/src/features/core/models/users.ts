@@ -31,6 +31,15 @@ export interface UserRoleInterface {
     value: string
 }
 
+export interface Groups {
+  
+    $ref: string;
+   
+    display: string;
+
+    value: string;
+}
+
 /**
  * Captures meta details of the user.
  */
@@ -52,6 +61,20 @@ export interface UserBasicInterface {
     meta: UserMetaInterface;
     profileUrl: string;
     roles?: UserRoleInterface[];
+    groups?: Groups[];
+}
+
+export interface UserInterface {
+    number : number,
+    id: string;
+    userName: string;
+    familyName :string;
+    givenName : string;
+    email: string| MultiValueAttributeInterface;
+    roles: string;
+    group: string;
+    created: string;
+    lastModified: string;
 }
 
 /**
