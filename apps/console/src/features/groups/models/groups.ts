@@ -68,6 +68,16 @@ export interface GroupsInterface {
     roles?: RolesMemberInterface[];
 }
 
+export interface GroupDTO {
+    number:number;
+    id: string;
+    displayName: string;
+    members: string
+    roles: string;
+    created: string;
+    lastModified: string;
+}
+
 /**
  * Interface to contain groups listing
  */

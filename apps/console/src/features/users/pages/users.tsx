@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 import moment from 'moment';
 import * as XLSX from 'xlsx';
 import FileSaver, { saveAs } from "file-saver";
@@ -43,7 +44,7 @@ import React, { FunctionComponent, MutableRefObject, ReactElement, useEffect, us
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
-import { Dropdown, DropdownProps, Icon, PaginationProps } from "semantic-ui-react";
+import { Dropdown, DropdownProps, Icon, Input, PaginationProps } from "semantic-ui-react";
 import {
     AdvancedSearchWithBasicFilters,
     AppState,
@@ -54,7 +55,8 @@ import {
     getAUserStore,
     getEmptyPlaceholderIllustrations,
     store,
-    UserInterface
+    UserInterface,
+    AppConstants
 } from "../../core";
 import { RootOnlyComponent } from "../../organizations/components";
 import { OrganizationUtils } from "../../organizations/utils";
@@ -75,11 +77,12 @@ import {
     UserStoreProperty
 } from "../../userstores";
 import { getUserStoreList } from "../../userstores/api";
-import { getUsersList } from "../api";
+import { addUser, getUsersList } from "../api";
 import { AddUserWizard, UsersList, UsersListOptionsComponent } from "../components";
 import { UserManagementConstants } from "../constants";
-import { UserListInterface } from "../models";
+import { AddUserWizardStateInterface, UserDetailsInterface, UserListInterface, createEmptyUserDetails } from "../models";
 import { UserListTestInterface } from "../models";
+import { SCIMConfigs } from 'apps/console/src/extensions';
 
 interface UserStoreItem {
     key: number;
@@ -234,25 +237,17 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
                 data.Resources = data?.Resources?.map((resource: UserBasicInterface) => {
                   
                     num = num +1;
-                    // console.log(userInterface)
-                    console.log(resource)
-                    console.log(resource.id)
-                    console.log(resource.userName)
                     const familyName:string = "name" in resource?resource.name.familyName:"";           
                     const givenName:string = "name" in resource?resource.name.givenName:"";       
-                    const roleStr = resource.roles.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1);
-                    console.log(roleStr)
+                    const roleStr = resource.roles !== null ?resource.roles.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"";
                     const created = resource.meta.created !== undefined ?moment(resource.meta.created).format('DD/MM/YYYY HH:mm:ss'):"";           
-                    const lastModified = resource.meta.lastModified !== undefined ?moment(resource.meta.lastModified).format('DD/MM/YYYY HH:mm:ss'):""; 
-                    console.log(created)
-                    console.log(lastModified)
+                    const lastModified = resource.meta.lastModified !== undefined ?moment(resource.meta.lastModified).format('DD/MM/YYYY HH:mm:ss'):"";   
                     let emailStr: string| MultiValueAttributeInterface = null;
                     if (resource?.emails instanceof Array) {
                     emailStr = resource?.emails[0];
                     }
-                    console.log(emailStr)
-                    const groupStr = resource.groups.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1);
-                    console.log(groupStr)
+                    const groupStr = resource.groups !== null ?resource.groups.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"";
+                 
                 
                     const userTest: UserInterface = {
                         number: num,
@@ -368,7 +363,134 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
         FileSaver.saveAs(data, fileName + fileExtension);
 }
 
+    const handleFile = async (e: any) => {
+    console.log('reading input file:');
+    const file = e.target.files[0];
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    let jsonData = XLSX.utils.sheet_to_json(worksheet, {
+        header: 2,
+        defval: "",
+    });
 
+    //console.log(e.target.files[0]);
+    //console.log(workbook);
+    // console.log(jsonData);
+    jsonData = jsonData?.map((user: AddUserWizardStateInterface) => {
+        // addUserBasic(user);
+        console.log(user)
+    })
+}
+
+const addUserBasic = (userInfo: AddUserWizardStateInterface) => {
+    let userName = "";
+
+    userInfo.domain !== "primary"
+        ? userName = userInfo.domain + "/" + userInfo.userName
+        : userName = userInfo.userName;
+
+    let userDetails: UserDetailsInterface = createEmptyUserDetails();
+    const password = userInfo.newPassword;
+
+    userInfo.passwordOption && userInfo.passwordOption !== "ask-password"
+        ? (
+            userDetails = {
+                emails:[
+                    {
+                        primary: true,
+                        value: userInfo.email
+                    }
+                ],
+                name: {
+                    familyName: userInfo.lastName,
+                    givenName: userInfo.firstName
+                },
+                password,
+                profileUrl: userInfo.profileUrl,
+                userName
+            }
+        )
+        : (
+            userDetails = {
+                emails: [
+                    {
+                        primary: true,
+                        value: userInfo.email
+                    }
+                ],
+                name: {
+                    familyName: userInfo.lastName,
+                    givenName: userInfo.firstName
+                },
+                password: userInfo.newPassword,
+                profileUrl: userInfo.profileUrl,
+                [SCIMConfigs.scim.enterpriseSchema] : {
+                    askPassword: "true"
+                },
+                userName
+            }
+        );
+
+  
+
+    addUser(userDetails)
+        .then((response) => {
+            dispatch(addAlert({
+                description: t(
+                    "console:manage.features.users.notifications.addUser.success.description"
+                ),
+                level: AlertLevels.SUCCESS,
+                message: t(
+                    "console:manage.features.users.notifications.addUser.success.message"
+                )
+            }));
+
+
+        })
+        .catch((error) => {
+            // Axios throws a generic `Network Error` for 401 status.
+            // As a temporary solution, a check to see if a response
+            // is available has be used.
+            if (!error.response || error.response.status === 401) {
+            
+                dispatch(addAlert({
+                    description: t(
+                        "console:manage.features.users.notifications.addUser.error.description"
+                    ),
+                    level: AlertLevels.ERROR,
+                    message: t(
+                        "console:manage.features.users.notifications.addUser.error.message"
+                    )
+                }));
+            } else if (error.response && error.response.data && error.response.data.detail) {
+              
+                dispatch(addAlert({
+                    description: t(
+                        "console:manage.features.users.notifications.addUser.error.description",
+                        { description: error.response.data.detail }
+                    ),
+                    level: AlertLevels.ERROR,
+                    message: t(
+                        "console:manage.features.users.notifications.addUser.error.message"
+                    )
+                }));
+            } else {
+             
+                // Generic error message
+                dispatch(addAlert({
+                    description: t(
+                        "console:manage.features.users.notifications.addUser.genericError.description"
+                    ),
+                    level: AlertLevels.ERROR,
+                    message: t(
+                        "console:manage.features.users.notifications.addUser.genericError.message"
+                    )
+                }));
+            }
+        })
+        
+};
 
 
     useEffect(() => {
@@ -724,6 +846,11 @@ useState
                             <Icon name="file excel"/>
                             { t("Export") }
                         </PrimaryButton>
+              
+                        <Input
+                            type="file"
+                        onInput={(e) => handleFile(e)}
+                        />
                     </Show>
                 )
             }

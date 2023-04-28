@@ -15,7 +15,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
+import moment from 'moment';
+import * as XLSX from 'xlsx';
+import FileSaver, { saveAs } from "file-saver";
+import axios, { AxiosRequestConfig } from 'axios';
+import fs from 'fs';
+import { HttpMethods } from "@wso2is/core/models";
 import { AccessControlConstants, Show } from "@wso2is/access-control";
 import { AlertInterface, AlertLevels, RolesInterface, UserstoreListResponseInterface } from "@wso2is/core/models";
 import { addAlert } from "@wso2is/core/store";
@@ -48,7 +53,7 @@ import { getUserStoreList } from "../../userstores/api";
 import { deleteGroupById, getGroupList, searchGroupList } from "../api";
 import { GroupList } from "../components";
 import { CreateGroupWizard } from "../components/wizard";
-import { GroupsInterface, SearchGroupInterface } from "../models";
+import { GroupDTO, GroupsInterface, SearchGroupInterface } from "../models";
 
 const GROUPS_SORTING_OPTIONS: DropdownItemProps[] = [
     {
@@ -176,6 +181,87 @@ const GroupsPage: FunctionComponent<any> = (): ReactElement => {
                 setGroupsListRequestLoading(false);
             });
     };
+
+    const getGroup2 = () => {
+        const arrayGroup = [];
+        let num : number = 0;
+        getGroupList(userStore)
+            .then((response: AxiosResponse) => {
+                if (response.status === 200) {
+                    const groupResources: GroupsInterface[] = response.data.Resources;
+
+                    if (groupResources && groupResources instanceof Array && groupResources.length !== 0) {
+                        // const updatedResources: GroupsInterface[] = groupResources.filter((role: GroupsInterface) => {
+                        //     return !role.displayName.includes("Application/")
+                        //         && !role.displayName.includes("Internal/");
+                        // });
+
+                        // response.data.Resources = updatedResources;
+                        console.log(groupResources)
+                        groupResources.map((group) => {
+                        num = num + 1;
+                        const displayName:string = "displayName" in group?group.displayName:"";
+               
+                        const roles:string = "roles" in group?group.roles.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"";
+                       
+                        const members:string = "members" in group?group.members.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"";
+                        const created = group.meta.created !== undefined ?moment(group.meta.created).format('DD/MM/YYYY HH:mm:ss'):"";           
+                        const lastModified = group.meta.lastModified !== undefined ?moment(group.meta.lastModified).format('DD/MM/YYYY HH:mm:ss'):"";   
+                        const groupDTO : GroupDTO = {
+                            number:num,
+                            id: group.id,
+                            displayName: displayName,
+                            members: members,
+                            roles: roles,
+                            created: created,
+                            lastModified: lastModified
+                        }
+                        console.log(groupDTO);
+                        arrayGroup.push(groupDTO);
+                    });
+                    const outputFilename = `list_group_${Date.now()}`;
+                    exportToExcel(arrayGroup,outputFilename)
+                       
+                    } else {
+                      
+                        setIsEmptyResults(true);
+                    }
+                   
+                } else {
+                    dispatch(addAlert({
+                        description: t("console:manage.features.groups.notifications." +
+                            "fetchGroups.genericError.description"),
+                        level: AlertLevels.ERROR,
+                        message: t("console:manage.features.groups.notifications.fetchGroups.genericError.message")
+                    }));
+                
+                }
+            }).catch((error: AxiosError) => {
+                dispatch(addAlert({
+                    description: error?.response?.data?.description ?? error?.response?.data?.detail
+                        ?? t("console:manage.features.groups.notifications.fetchGroups.genericError.description"),
+                    level: AlertLevels.ERROR,
+                    message: error?.response?.data?.message
+                        ?? t("console:manage.features.groups.notifications.fetchGroups.genericError.message")
+                }));
+             
+            })
+            
+    };
+
+    const 
+    exportToExcel = (csvData, fileName) => {
+        const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const fileExtension = '.xlsx';
+
+        const ws = XLSX.utils.json_to_sheet(csvData);
+        const wb = {Sheets: {'data': ws}, SheetNames: ['data']};  
+        const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});      
+        
+        // let readUTF8 = excelBuffer.toString('utf8')
+        const data = new Blob([excelBuffer], {type: fileType});
+        FileSaver.saveAs(data, fileName + fileExtension);
+}
 
     /**
      * The following function fetch the user store list and set it to the state.
@@ -379,6 +465,14 @@ const GroupsPage: FunctionComponent<any> = (): ReactElement => {
                         >
                             <Icon name="add"/>
                             { t("console:manage.features.roles.list.buttons.addButton", { type: "Group" }) }
+                        </PrimaryButton>
+
+                        <PrimaryButton
+                            data-testid="group-mgt-groups-list-add-button"
+                            onClick={ () => getGroup2() }
+                        >
+                            <Icon name="file excel"/>
+                            { t("Export") }
                         </PrimaryButton>
                     </Show>
                 )
