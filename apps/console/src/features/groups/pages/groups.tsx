@@ -36,7 +36,8 @@ import React, { FunctionComponent, ReactElement, SyntheticEvent, useEffect, useS
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
-import { Dropdown, DropdownItemProps, DropdownProps, Icon, PaginationProps } from "semantic-ui-react";
+import { Dropdown, DropdownItemProps, DropdownProps, Icon, PaginationProps,Input } from "semantic-ui-react";
+import { createGroup } from "../api";
 import {
     AdvancedSearchWithBasicFilters,
     AppState,
@@ -54,7 +55,9 @@ import { deleteGroupById, getGroupList, searchGroupList } from "../api";
 import { GroupList } from "../components";
 import { CreateGroupWizard } from "../components/wizard";
 import { GroupDTO, GroupsInterface, SearchGroupInterface } from "../models";
-
+import { getRolesList, updateRole } from "../../roles/api";
+import { CreateGroupInterface, CreateGroupMemberInterface } from "../models";
+import { Heading, LinkButton, Steps, useWizardAlert } from "@wso2is/react-components";
 const GROUPS_SORTING_OPTIONS: DropdownItemProps[] = [
     {
         key: 1,
@@ -102,6 +105,7 @@ const GroupsPage: FunctionComponent<any> = (): ReactElement => {
     const [ paginatedGroups, setPaginatedGroups ] = useState<GroupsInterface[]>([]);
 
     const [ listSortingStrategy, setListSortingStrategy ] = useState<DropdownItemProps>(GROUPS_SORTING_OPTIONS[ 0 ]);
+    const [ alert, setAlert, alertComponent ] = useWizardAlert();
 
     useEffect(() => {
         if(searchQuery == "") {
@@ -262,6 +266,171 @@ const GroupsPage: FunctionComponent<any> = (): ReactElement => {
         const data = new Blob([excelBuffer], {type: fileType});
         FileSaver.saveAs(data, fileName + fileExtension);
 }
+
+const handleFile = async (e: any) => {
+    console.log('reading input file:');
+    const file = e.target.files[0];
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    let jsonData = XLSX.utils.sheet_to_json(worksheet, {
+        header: 2,
+        defval: "",
+    });
+
+    // console.log(e.target.files[0]);
+    // console.log(workbook);
+    console.log(jsonData);
+    jsonData = jsonData?.map((groupDetails: any) => {
+        addGroup(groupDetails);
+        console.log(groupDetails)
+    })
+}
+
+
+const addGroup = (groupDetails: any): void => {
+    let groupName = "";
+
+    groupDetails?.domain !== "primary"
+        ? groupName = groupDetails?.BasicDetails
+            ? groupDetails?.BasicDetails?.domain + "/" + groupDetails?.BasicDetails?.groupName
+            : groupDetails?.domain + "/" + groupDetails?.groupName
+        : groupName = groupDetails?.BasicDetails ? groupDetails?.BasicDetails?.groupName : groupDetails?.groupName;
+
+    const members: CreateGroupMemberInterface[] = [];
+    // const users = groupDetails?.UserList;
+
+    // if (users?.length > 0) {
+    //     users?.forEach(user => {
+    //         members?.push({
+    //             display: user.userName,
+    //             value: user.id
+    //         });
+    //     });
+    // }
+
+    const groupData: CreateGroupInterface = {
+        "displayName": groupName,
+        "members" : members,
+        "schemas": [
+            "urn:ietf:params:scim:schemas:core:2.0:Group"
+        ]
+
+    };
+
+ 
+
+    /**
+     * Create Group API Call.
+     */
+    createGroup(groupData).then(response => {
+        if (response.status === 201) {
+
+            const createdGroup = response.data;
+            const rolesList: string[] = [];
+
+            if (groupDetails?.RoleList?.roles) {
+                groupDetails?.RoleList?.roles.forEach(role => {
+                    rolesList?.push(role.id);
+                });
+            }
+
+            const roleData = {
+                "Operations": [ {
+                    "op": "add",
+                    "value": {
+                        "groups": [ {
+                            "display": createdGroup.displayName,
+                            "value": createdGroup.id
+                        } ]
+                    }
+                } ],
+                "schemas": [ "urn:ietf:params:scim:api:messages:2.0:PatchOp" ]
+            };
+
+            if (rolesList && rolesList.length > 0) {
+                for (const roleId of rolesList) {
+                    updateRole(roleId, roleData)
+                        .catch(error => {
+                            if (!error.response || error.response.status === 401) {
+                                setAlert({
+                                    description: t("console:manage.features.groups.notifications." +
+                                        "createPermission." +
+                                        "error.description"),
+                                    level: AlertLevels.ERROR,
+                                    message: t("console:manage.features.groups.notifications.createPermission." +
+                                        "error.message")
+                                });
+                            } else if (error.response && error.response.data.detail) {
+                                setAlert({
+                                    description: t("console:manage.features.groups.notifications." +
+                                        "createPermission." +
+                                        "error.description",
+                                    { description: error.response.data.detail }),
+                                    level: AlertLevels.ERROR,
+                                    message: t("console:manage.features.groups.notifications.createPermission." +
+                                        "error.message")
+                                });
+                            } else {
+                                setAlert({
+                                    description: t("console:manage.features.groups.notifications." +
+                                        "createPermission." +
+                                        "genericError.description"),
+                                    level: AlertLevels.ERROR,
+                                    message: t("console:manage.features.groups.notifications.createPermission." +
+                                        "genericError." +
+                                        "message")
+                                });
+                            }
+                        });
+                }
+            }
+
+            dispatch(
+                addAlert({
+                    description: t("console:manage.features.groups.notifications.createGroup.success." +
+                        "description"),
+                    level: AlertLevels.SUCCESS,
+                    message: t("console:manage.features.groups.notifications.createGroup.success." +
+                        "message")
+                })
+            );
+        }
+
+     
+       
+    }).catch(error => {
+        if (!error.response || error.response.status === 401) {
+          
+            dispatch(
+                addAlert({
+                    description: t("console:manage.features.groups.notifications.createGroup.error.description"),
+                    level: AlertLevels.ERROR,
+                    message: t("console:manage.features.groups.notifications.createGroup.error.message")
+                })
+            );
+        } else if (error.response && error.response.data.detail) {
+           
+            dispatch(
+                addAlert({
+                    description: t("console:manage.features.groups.notifications.createGroup.error.description",
+                        { description: error.response.data.detail }),
+                    level: AlertLevels.ERROR,
+                    message: t("console:manage.features.groups.notifications.createGroup.error.message")
+                })
+            );
+        } else {
+         
+            dispatch(addAlert({
+                description: t("console:manage.features.groups.notifications.createGroup.genericError.description"),
+                level: AlertLevels.ERROR,
+                message: t("console:manage.features.groups.notifications.createGroup.genericError.message")
+            }));
+        }
+    }).finally(() => {
+       console.log("");
+    });
+};
 
     /**
      * The following function fetch the user store list and set it to the state.
@@ -474,6 +643,10 @@ const GroupsPage: FunctionComponent<any> = (): ReactElement => {
                             <Icon name="file excel"/>
                             { t("Export") }
                         </PrimaryButton>
+                        <Input
+                            type="file"
+                        onInput={(e) => handleFile(e)}
+                        />
                     </Show>
                 )
             }
