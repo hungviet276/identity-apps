@@ -15,7 +15,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
+import moment from 'moment';
+import * as XLSX from 'xlsx';
+import FileSaver, { saveAs } from "file-saver";
+import axios, { AxiosRequestConfig } from 'axios';
+import fs from 'fs';
+import { HttpMethods  } from "@wso2is/core/models";
 import { AccessControlConstants, Show } from "@wso2is/access-control";
 import { 
     AlertInterface,
@@ -39,7 +44,8 @@ import { getRolesList } from "../../roles/api";
 import { getUserStoreList } from "../../userstores/api";
 import { deleteRoleById, searchRoleList } from "../api";
 import { APPLICATION_DOMAIN, INTERNAL_DOMAIN } from "../constants";
-import { SearchRoleInterface } from "../models";
+import { SearchRoleInterface,RoleDTO } from "../models";
+import { getRoleById } from "../api";
 
 const ROLES_SORTING_OPTIONS: DropdownItemProps[] = [
     {
@@ -141,6 +147,74 @@ const RolesPage = (): ReactElement => {
                 setRoleListFetchRequestLoading(false);
             });
     };
+
+    const exportListRole = () => {
+        setRoleListFetchRequestLoading(true);
+      
+        getRolesList(userStore)
+            .then((response: AxiosResponse<RoleListInterface>) => {
+                if (response.status === 200) {
+                    let num : number = 0;
+                    const roleResources: RolesInterface[] = response.data.Resources;
+                    const tasks = [];
+                    if (roleResources && roleResources instanceof Array) {
+                            roleResources.map((role) => {
+                                num = num +1; 
+                                tasks.push(getRoleDTOById(role,num));
+                        });
+                        Promise.all(tasks).then(result => {
+                            console.log({result});
+                            const outputFilename = `list_role_${Date.now()}`;
+                            // console.log(arrayRole)
+                            exportToExcel(result,outputFilename);
+                          });
+                    }
+                }
+            })
+            .finally(() => {
+                setRoleListFetchRequestLoading(false);
+            });
+    };
+    const 
+    getRoleDTOById = (role,num) => {
+        const roleDTO = getRoleById(role.id)
+        .then(response => {
+            // if (response.status === 200) {     
+                console.log(response.data);
+                const id:string = "id" in response.data? response.data.id :"";
+                const displayName:string = "displayName" in response.data? response.data.displayName :"";
+                const group:string = "groups" in response.data?response.data.groups.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"test";  
+                const user:string = "users" in response.data?response.data.users.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"test";  
+                const roleDTO: RoleDTO = {
+                    number: num,
+                    id: id,
+                    displayName: displayName,
+                    group: group,
+                    user: user
+                  };
+                 return roleDTO;
+            // }
+        }).catch(() => {
+            // TODO: handle error
+        })
+        .finally(() => {
+            console.log();
+        });
+        return roleDTO;
+}
+    const 
+    exportToExcel = (csvData, fileName) => {
+        const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const fileExtension = '.xlsx';
+        console.log(csvData)
+        const ws = XLSX.utils.json_to_sheet(csvData);
+        const wb = {Sheets: {'data': ws}, SheetNames: ['data']};  
+        const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});      
+        
+        // let readUTF8 = excelBuffer.toString('utf8')
+        const data = new Blob([excelBuffer], {type: fileType});
+        FileSaver.saveAs(data, fileName + fileExtension);
+}
 
     /**
      * The following function fetch the user store list and set it to the state.
@@ -329,6 +403,13 @@ const RolesPage = (): ReactElement => {
                                 name="add"
                             />
                             { t("console:manage.features.roles.list.buttons.addButton", { type: "Role" }) }
+                        </PrimaryButton>
+                        <PrimaryButton
+                            data-testid="user-mgt-user-list-add-user-button"
+                            onClick={ () => exportListRole()  }
+                        >
+                            <Icon name="file excel"/>
+                            { t("Export") }
                         </PrimaryButton>
                     </Show>
                 )

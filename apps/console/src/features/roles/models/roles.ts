@@ -31,6 +31,14 @@ export interface CreateRoleInterface {
     permissions?: string[];
 }
 
+export interface RoleDTO {
+    number: number;
+    id: string;
+    displayName: string;
+    group: string;
+    user: string;
+}
+
 /**
  * Interface to store User information related to create role api
  */
