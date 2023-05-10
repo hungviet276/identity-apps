@@ -37,15 +37,16 @@ import React, { ReactElement, SyntheticEvent, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "redux";
-import { Dropdown, DropdownItemProps, DropdownProps, Icon, PaginationProps } from "semantic-ui-react";
-import { AdvancedSearchWithBasicFilters, UIConstants } from "../../core";
+import { Dropdown, DropdownItemProps, DropdownProps, Icon, PaginationProps,Input } from "semantic-ui-react";
+import { AdvancedSearchWithBasicFilters, AppConstants, UIConstants } from "../../core";
 import { CreateRoleWizard, RoleList } from "../../roles";
-import { getRolesList } from "../../roles/api";
+import { createRole, getRolesList } from "../../roles/api";
 import { getUserStoreList } from "../../userstores/api";
 import { deleteRoleById, searchRoleList } from "../api";
 import { APPLICATION_DOMAIN, INTERNAL_DOMAIN } from "../constants";
-import { SearchRoleInterface,RoleDTO } from "../models";
+import { SearchRoleInterface,RoleDTO, CreateRoleInterface, CreateRoleMemberInterface, TreeNode } from "../models";
 import { getRoleById } from "../api";
+import { CreateGroupMemberInterface } from '../../groups';
 
 const ROLES_SORTING_OPTIONS: DropdownItemProps[] = [
     {
@@ -163,9 +164,7 @@ const RolesPage = (): ReactElement => {
                                 tasks.push(getRoleDTOById(role,num));
                         });
                         Promise.all(tasks).then(result => {
-                            console.log({result});
                             const outputFilename = `list_role_${Date.now()}`;
-                            // console.log(arrayRole)
                             exportToExcel(result,outputFilename);
                           });
                     }
@@ -179,12 +178,10 @@ const RolesPage = (): ReactElement => {
     getRoleDTOById = (role,num) => {
         const roleDTO = getRoleById(role.id)
         .then(response => {
-            // if (response.status === 200) {     
-                console.log(response.data);
                 const id:string = "id" in response.data? response.data.id :"";
                 const displayName:string = "displayName" in response.data? response.data.displayName :"";
-                const group:string = "groups" in response.data?response.data.groups.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"test";  
-                const user:string = "users" in response.data?response.data.users.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"test";  
+                const group:string = "groups" in response.data?response.data.groups.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"";  
+                const user:string = "users" in response.data?response.data.users.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"";  
                 const roleDTO: RoleDTO = {
                     number: num,
                     id: id,
@@ -193,7 +190,6 @@ const RolesPage = (): ReactElement => {
                     user: user
                   };
                  return roleDTO;
-            // }
         }).catch(() => {
             // TODO: handle error
         })
@@ -206,7 +202,6 @@ const RolesPage = (): ReactElement => {
     exportToExcel = (csvData, fileName) => {
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         const fileExtension = '.xlsx';
-        console.log(csvData)
         const ws = XLSX.utils.json_to_sheet(csvData);
         const wb = {Sheets: {'data': ws}, SheetNames: ['data']};  
         const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});      
@@ -215,6 +210,89 @@ const RolesPage = (): ReactElement => {
         const data = new Blob([excelBuffer], {type: fileType});
         FileSaver.saveAs(data, fileName + fileExtension);
 }
+
+const handleFile = async (e: any) => {
+    const file = e.target.files[0];
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+        header: 2,
+        defval: "",
+    });
+
+
+    
+    jsonData?.map((role) => {
+        // addUserBasic(user);
+        addRole(role)
+    })
+}
+
+const addRole = (basicData: any): void => {
+
+    const users: CreateRoleMemberInterface[] = [];
+    const groups: CreateGroupMemberInterface[] = [];
+    const permissions: string[] = [];
+
+
+    const roleData: CreateRoleInterface = {
+        "displayName": basicData.roleName?basicData.roleName:"",
+        "groups": groups,
+        "permissions": permissions,
+        "schemas": [
+            "urn:ietf:params:scim:schemas:extension:2.0:Role"
+        ],
+        "users": users
+    };
+
+        // Create Role API Call.
+        createRole(roleData).then(response => {
+            if (response.status === 201) {
+                dispatch(
+                    addAlert({
+                        description: t("console:manage.features.roles.notifications.createRole." +
+                            "success.description"),
+                        level: AlertLevels.SUCCESS,
+                        message: t("console:manage.features.roles.notifications.createRole.success.message")
+                    })
+                );
+            }
+
+        }).catch(error => {
+            if (!error.response || error.response.status === 401) {
+          
+                dispatch(
+                    addAlert({
+                        description: t("console:manage.features.roles.notifications.createRole.error.description"),
+                        level: AlertLevels.ERROR,
+                        message: t("console:manage.features.roles.notifications.createRole.error.message")
+                    })
+                );
+            } else if (error.response && error.response.data.detail) {
+          
+                dispatch(
+                    addAlert({
+                        description: t("console:manage.features.roles.notifications.createRole.error.description",
+                            { description: error.response.data.detail }),
+                        level: AlertLevels.ERROR,
+                        message: t("console:manage.features.roles.notifications.createRole.error.message")
+                    })
+                );
+            } else {
+            
+                dispatch(addAlert({
+                    description: t("console:manage.features.roles.notifications.createRole." +
+                        "genericError.description"),
+                    level: AlertLevels.ERROR,
+                    message: t("console:manage.features.roles.notifications.createRole.genericError.message")
+                }));
+            }
+        }).finally(() => {
+            console.log()
+        });
+   
+};
 
     /**
      * The following function fetch the user store list and set it to the state.
@@ -411,6 +489,10 @@ const RolesPage = (): ReactElement => {
                             <Icon name="file excel"/>
                             { t("Export") }
                         </PrimaryButton>
+                        <Input
+                            type="file"
+                        onInput={(e) => handleFile(e)}
+                        />
                     </Show>
                 )
             }

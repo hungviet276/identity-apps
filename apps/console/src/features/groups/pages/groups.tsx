@@ -201,7 +201,6 @@ const GroupsPage: FunctionComponent<any> = (): ReactElement => {
                         // });
 
                         // response.data.Resources = updatedResources;
-                        console.log(groupResources)
                         groupResources.map((group) => {
                         num = num + 1;
                         const displayName:string = "displayName" in group?group.displayName:"";
@@ -220,7 +219,6 @@ const GroupsPage: FunctionComponent<any> = (): ReactElement => {
                             created: created,
                             lastModified: lastModified
                         }
-                        console.log(groupDTO);
                         arrayGroup.push(groupDTO);
                     });
                     const outputFilename = `list_group_${Date.now()}`;
@@ -268,7 +266,6 @@ const GroupsPage: FunctionComponent<any> = (): ReactElement => {
 }
 
 const handleFile = async (e: any) => {
-    console.log('reading input file:');
     const file = e.target.files[0];
     const data = await file.arrayBuffer();
     const workbook = XLSX.read(data);
@@ -278,12 +275,8 @@ const handleFile = async (e: any) => {
         defval: "",
     });
 
-    // console.log(e.target.files[0]);
-    // console.log(workbook);
-    console.log(jsonData);
     jsonData = jsonData?.map((groupDetails: any) => {
         addGroup(groupDetails);
-        console.log(groupDetails)
     })
 }
 

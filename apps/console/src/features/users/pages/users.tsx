@@ -230,24 +230,23 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
         const domain = null;
         const modifiedLimit : number = limit + TEMP_RESOURCE_LIST_ITEM_LIMIT_OFFSET;
         let num : number = 0;
+
         getUsersList(modifiedLimit, offset, filter, attribute, domain)
             .then((response: UserListInterface) => {
                 const data: UserListInterface = { ...response };
-            
                 data.Resources = data?.Resources?.map((resource: UserBasicInterface) => {
                   
                     num = num +1;
                     const familyName:string = "name" in resource?resource.name.familyName:"";           
                     const givenName:string = "name" in resource?resource.name.givenName:"";       
-                    const roleStr = resource.roles !== null ?resource.roles.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"";
+                    const roleStr = "roles" in resource ?resource.roles !== null ?resource.roles.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"":"";
                     const created = resource.meta.created !== undefined ?moment(resource.meta.created).format('DD/MM/YYYY HH:mm:ss'):"";           
                     const lastModified = resource.meta.lastModified !== undefined ?moment(resource.meta.lastModified).format('DD/MM/YYYY HH:mm:ss'):"";   
                     let emailStr: string| MultiValueAttributeInterface = null;
                     if (resource?.emails instanceof Array) {
                     emailStr = resource?.emails[0];
                     }
-                    const groupStr = resource.groups !== null ?resource.groups.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"";
-                 
+                    const groupStr = "groups" in resource ?resource.groups !== null ?resource.groups.reduce((acc, curr) => `${acc}${curr.display},` ,'').slice(0,-1):"":"";
                 
                     const userTest: UserInterface = {
                         number: num,
@@ -275,8 +274,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
                     //         lastModified: lastModified}
                     //   ])
                       arrayUser.push(userTest)
-                 
-                      console.log(userTest);
+                                    
                     const userStore: string = resource.userName.split("/").length > 1
                         ? resource.userName.split("/")[0]
                         : "Primary";
@@ -306,7 +304,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
                
           
                 });
-                
+
                 setUsersList(moderateUsersList(data, modifiedLimit, TEMP_RESOURCE_LIST_ITEM_LIMIT_OFFSET));
                 setUserStoreError(false);
                 const outputFilename = `list_user_${Date.now()}`;
@@ -349,8 +347,8 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
             });
     };
 
-    const 
-    exportToCSV = (csvData, fileName) => {
+    
+    const exportToCSV = (csvData, fileName) => {
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         const fileExtension = '.xlsx';
 
@@ -364,7 +362,6 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
 }
 
     const handleFile = async (e: any) => {
-    console.log('reading input file:');
     const file = e.target.files[0];
     const data = await file.arrayBuffer();
     const workbook = XLSX.read(data);
@@ -374,12 +371,8 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
         defval: "",
     });
 
-    //console.log(e.target.files[0]);
-    //console.log(workbook);
-    // console.log(jsonData);
     jsonData = jsonData?.map((user: AddUserWizardStateInterface) => {
-        // addUserBasic(user);
-        console.log(user)
+        addUserBasic(user);
     })
 }
 
