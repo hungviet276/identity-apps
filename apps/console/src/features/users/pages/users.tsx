@@ -15,7 +15,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 import moment from 'moment';
 import * as XLSX from 'xlsx';
 import FileSaver, { saveAs } from "file-saver";
@@ -817,7 +816,11 @@ useState
                 });
             });
     };
-
+    const ref = useRef(null)
+    const handleClick = (e) => {
+      ref.current.click()
+    }
+     
     return (
         <PageLayout
             action={
@@ -839,11 +842,19 @@ useState
                             <Icon name="file excel"/>
                             { t("Export") }
                         </PrimaryButton>
-              
+                        {/* <PrimaryButton
+                        
+                        >
                         <Input
-                            type="file"
+                            type="file" 
                         onInput={(e) => handleFile(e)}
                         />
+     </PrimaryButton> */}
+
+<PrimaryButton onClick={handleClick} > <Icon name="add square"/> Import</PrimaryButton>
+      <input ref={ref} type="file" style={{ display: 'none' }}  onInput={(e) => handleFile(e)}/>
+
+                       
                     </Show>
                 )
             }

@@ -33,7 +33,7 @@ import { addAlert } from "@wso2is/core/store";
 import { ListLayout, PageLayout, PrimaryButton } from "@wso2is/react-components";
 import { AxiosResponse } from "axios";
 import find from "lodash-es/find";
-import React, { ReactElement, SyntheticEvent, useEffect, useState } from "react";
+import React, { ReactElement, SyntheticEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "redux";
@@ -465,6 +465,10 @@ const addRole = (basicData: any): void => {
         setSearchQuery(null);
         getRoles();
     };
+    const ref = useRef(null)
+    const handleClick = (e) => {
+      ref.current.click()
+    }
 
     return (
         <PageLayout
@@ -489,10 +493,12 @@ const addRole = (basicData: any): void => {
                             <Icon name="file excel"/>
                             { t("Export") }
                         </PrimaryButton>
-                        <Input
+                        {/* <Input
                             type="file"
                         onInput={(e) => handleFile(e)}
-                        />
+                        /> */}
+                        <PrimaryButton onClick={handleClick} > <Icon name="add square"/> Import</PrimaryButton>
+      <input ref={ref} type="file" style={{ display: 'none' }}  onInput={(e) => handleFile(e)}/>
                     </Show>
                 )
             }
