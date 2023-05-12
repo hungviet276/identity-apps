@@ -32,7 +32,7 @@ import {
 } from "@wso2is/react-components";
 import { AxiosError, AxiosResponse } from "axios";
 import find from "lodash-es/find";
-import React, { FunctionComponent, ReactElement, SyntheticEvent, useEffect, useRef, useState } from "react";
+import React, { FunctionComponent, ReactElement, SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
@@ -614,10 +614,6 @@ const addGroup = (groupDetails: any): void => {
         setSearchQuery("");
         getGroups();
     };
-    const ref = useRef(null)
-    const handleClick = (e) => {
-      ref.current.click()
-    }
 
     return (
         <PageLayout
@@ -640,13 +636,10 @@ const addGroup = (groupDetails: any): void => {
                             <Icon name="file excel"/>
                             { t("Export") }
                         </PrimaryButton>
-                        {/* <Input
+                        <Input
                             type="file"
                         onInput={(e) => handleFile(e)}
-                        /> */}
-                        
-<PrimaryButton onClick={handleClick} > <Icon name="add square"/> Import</PrimaryButton>
-      <input ref={ref} type="file" style={{ display: 'none' }}  onInput={(e) => handleFile(e)}/>
+                        />
                     </Show>
                 )
             }
