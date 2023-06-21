@@ -16,7 +16,7 @@
  * under the License.
  */
 import moment from 'moment';
-import * as XLSX from 'xlsx';
+import XLSX from  'xlsx-js-style'
 import FileSaver, { saveAs } from "file-saver";
 import axios, { AxiosRequestConfig } from 'axios';
 import fs from 'fs';
@@ -33,7 +33,7 @@ import { addAlert } from "@wso2is/core/store";
 import { ListLayout, PageLayout, PrimaryButton } from "@wso2is/react-components";
 import { AxiosResponse } from "axios";
 import find from "lodash-es/find";
-import React, { ReactElement, SyntheticEvent, useEffect, useState } from "react";
+import React, { ReactElement, SyntheticEvent, useEffect, useState ,useRef} from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "redux";
@@ -202,8 +202,31 @@ const RolesPage = (): ReactElement => {
     exportToExcel = (csvData, fileName) => {
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         const fileExtension = '.xlsx';
-        const ws = XLSX.utils.json_to_sheet(csvData);
+ 
+        const newArray = csvData.map(function(item){
+            return {
+                "STT": item.number,
+                "ID": item.id,
+                "Tên quyền": item.displayName,
+                "Tên nhóm thuộc quyền": item.group,
+                "Tên người dùng thuộc quyền": item.user
+            }
+        })
+        const ws = XLSX.utils.json_to_sheet(newArray);
         const wb = {Sheets: {'data': ws}, SheetNames: ['data']};  
+        ws['!cols'] = [{ width:15   }, { width: 50 }, { width: 20 }, { width: 40 }, { width: 40 }]
+        const colName = ['A1', 'B1', 'C1', 'D1', 'E1']
+        for(const itm of colName) {
+            ws[itm].s = { // set the style for target cell
+                font: {
+                    bold: true,
+                },
+                alignment: {
+                    vertical: 'center',
+                    horizontal : 'center'
+                  }
+              };
+        }
         const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});      
         
         // let readUTF8 = excelBuffer.toString('utf8')
@@ -466,6 +489,11 @@ const addRole = (basicData: any): void => {
         getRoles();
     };
 
+    const ref = useRef(null)
+    const handleClick = (e) => {
+      ref.current.click()
+    }
+
     return (
         <PageLayout
             action={
@@ -489,10 +517,12 @@ const addRole = (basicData: any): void => {
                             <Icon name="file excel"/>
                             { t("Export") }
                         </PrimaryButton>
-                        <Input
+                        {/* <Input
                             type="file"
                         onInput={(e) => handleFile(e)}
-                        />
+                        /> */}
+                        <PrimaryButton onClick={handleClick} > <Icon name="add square"/> Import</PrimaryButton>
+      <input ref={ref} type="file" style={{ display: 'none' }}  onInput={(e) => handleFile(e)}/>
                     </Show>
                 )
             }

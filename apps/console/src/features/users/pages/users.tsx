@@ -17,7 +17,9 @@
  */
 
 import moment from 'moment';
-import * as XLSX from 'xlsx';
+// import * as XLSX from 'xlsx';
+import XLSX from  'xlsx-js-style'
+// import XlsxPopulate from "xlsx-populate";
 import FileSaver, { saveAs } from "file-saver";
 import axios, { AxiosRequestConfig } from 'axios';
 import fs from 'fs';
@@ -351,11 +353,42 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
     const exportToCSV = (csvData, fileName) => {
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         const fileExtension = '.xlsx';
+        const headerTitle = 'your header title here';
+ 
+        const newArray = csvData.map(function(item){
+            return {
+                "STT": item.number,
+                "ID": item.id,
+                "Tên đăng nhập": item.userName,
+                "Họ tên đệm": item.familyName,
+                "Tên": item.givenName,
+                "Email": item.email,
+                "Quyền người dùng": item.roles,
+                "Nhóm người dùng": item.group,
+                "Thời gian tạo": item.created,
+                "Thời gian sửa": item.lastModified,
+            }
+        })
+        const ws = XLSX.utils.json_to_sheet(newArray);
 
-        const ws = XLSX.utils.json_to_sheet(csvData);
         const wb = {Sheets: {'data': ws}, SheetNames: ['data']};  
+        ws['!cols'] = [{ width:15   }, { width: 50 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 30 }, { width: 20 }, { width: 20 }, { width: 20 }, { width: 20 }]
+        const colName = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'I1', 'J1']
+        for(const itm of colName) {
+            ws[itm].s = { // set the style for target cell
+                font: {
+                    bold: true,
+                },
+                alignment: {
+                    vertical: 'center',
+                    horizontal : 'center'
+                  }
+              };
+        }
+ 
+   
         const excelBuffer = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});      
-        
+     
         // let readUTF8 = excelBuffer.toString('utf8')
         const data = new Blob([excelBuffer], {type: fileType});
         FileSaver.saveAs(data, fileName + fileExtension);
@@ -818,6 +851,12 @@ useState
             });
     };
 
+    const ref = useRef(null)
+    const handleClick = (e) => {
+      ref.current.click()
+    }
+
+    
     return (
         <PageLayout
             action={
@@ -840,10 +879,12 @@ useState
                             { t("Export") }
                         </PrimaryButton>
               
-                        <Input
+                        {/* <Input
                             type="file"
                         onInput={(e) => handleFile(e)}
-                        />
+                        /> */}
+                        <PrimaryButton onClick={handleClick} > <Icon name="add square"/> Import</PrimaryButton>
+      <input ref={ref} type="file" style={{ display: 'none' }}  onInput={(e) => handleFile(e)}/>
                     </Show>
                 )
             }

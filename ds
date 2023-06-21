@@ -1,0 +1,511 @@
+[33mcommit b8aeb6abc7d556abe08d11e0bca37617d8ccd57e[m[33m ([m[1;36mHEAD -> [m[1;32mhungdv[m[33m)[m
+Author: hungviet276 <viethungkt7k6@gmail.com>
+Date:   Fri May 12 14:13:00 2023 +0700
+
+    Revert "style button import"
+    
+    This reverts commit 033e511af49bd0bc54d54a4e781233255ada8b96.
+
+[33mcommit 033e511af49bd0bc54d54a4e781233255ada8b96[m[33m ([m[1;31morigin/hungdv[m[33m)[m
+Author: hungviet276 <viethungkt7k6@gmail.com>
+Date:   Thu May 11 08:51:13 2023 +0700
+
+    style button import
+
+[33mcommit 7b7ea1297e86dbe29d31975bb387e0cacdbd216c[m
+Author: hungviet276 <viethungkt7k6@gmail.com>
+Date:   Wed May 10 10:05:36 2023 +0700
+
+    add role by excel
+
+[33mcommit eacb23269e092af137bf42930b4f50ce5fb64f7d[m
+Author: hungviet276 <viethungkt7k6@gmail.com>
+Date:   Tue May 9 16:06:37 2023 +0700
+
+    add button export role
+
+[33mcommit 61733184d455661f797e8acd146edaa4362894d1[m
+Author: hungviet276 <viethungkt7k6@gmail.com>
+Date:   Mon May 8 14:34:09 2023 +0700
+
+    add group by excel
+
+[33mcommit a936c6d17d7c085c73db9a1c1783c77652a855b5[m
+Author: hungviet276 <viethungkt7k6@gmail.com>
+Date:   Fri Apr 28 17:03:01 2023 +0700
+
+    add export group and import user
+
+[33mcommit 5b69f0685f1d827f2f6a0810516578deb0669bc1[m
+Author: hungviet276 <viethungkt7k6@gmail.com>
+Date:   Fri Apr 28 09:47:51 2023 +0700
+
+    export userlist
+
+[33mcommit 900fbd3ce83dd8f9d8372b4e36bbf8de82fc80c6[m
+Author: hungviet276 <viethungkt7k6@gmail.com>
+Date:   Wed Apr 26 11:08:37 2023 +0700
+
+    first commit
+
+[33mcommit f78abb323d7e6f97053d375756cca494b44e81ec[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/hungneo[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Sun Apr 23 18:45:17 2023 +0000
+
+    [WSO2 Release][Jenkins #5184]  [Release 1.6.303]  update package versions
+
+[33mcommit 8e8e0c9426dacf974273696bdaeab2461682ae9b[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Sun Apr 23 18:32:02 2023 +0000
+
+    [WSO2 Release] [Jenkins #5184] [Release 1.6.303] prepare for next development iteration
+
+[33mcommit ccfd9c3bf85fd0aefabd6bd02fa9bcdb0bfb7ba3[m[33m ([m[1;33mtag: v1.6.303[m[33m)[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Sun Apr 23 18:32:00 2023 +0000
+
+    [WSO2 Release] [Jenkins #5184] [Release 1.6.303] prepare release v1.6.303
+
+[33mcommit c36c84e087911d1c4cd971fc8ff8caf000d7b060[m
+Merge: 82de353eae c567dffe87
+Author: sadilchamishka <35717390+sadilchamishka@users.noreply.github.com>
+Date:   Sun Apr 23 23:44:24 2023 +0530
+
+    Merge pull request #3891 from sadilchamishka/change-validate-callback-logic
+    
+    OSGI service independent approach to validate callback url
+
+[33mcommit c567dffe87086a9649e061686c12c755e7350637[m
+Author: sadilchamishka <sandilchamishka@gmail.com>
+Date:   Sun Apr 23 16:32:06 2023 +0530
+
+    Address review comments
+
+[33mcommit 828c51c15382db600153eb193bf7dc37e9feccc1[m
+Author: sadilchamishka <sandilchamishka@gmail.com>
+Date:   Sun Apr 23 10:22:59 2023 +0530
+
+    bump framework version
+
+[33mcommit 82de353eae6889878eb07cc16fed615c1e7a5ac1[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Fri Apr 21 13:15:13 2023 +0000
+
+    [WSO2 Release][Jenkins #5182]  [Release 1.6.302]  update package versions
+
+[33mcommit a793d3799397627def24157dd95823de4d1b2b42[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Fri Apr 21 13:03:04 2023 +0000
+
+    [WSO2 Release] [Jenkins #5182] [Release 1.6.302] prepare for next development iteration
+
+[33mcommit b47201ebcbb12dda2587a7c02ed4ff155fba446c[m[33m ([m[1;33mtag: v1.6.302[m[33m)[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Fri Apr 21 13:03:02 2023 +0000
+
+    [WSO2 Release] [Jenkins #5182] [Release 1.6.302] prepare release v1.6.302
+
+[33mcommit e50ae3ae13ca7ac536a7187c92663f010f223c86[m
+Author: sadilchamishka <sandilchamishka@gmail.com>
+Date:   Fri Apr 21 16:03:42 2023 +0530
+
+    Avoid NPE when callback url is not available in the request url
+
+[33mcommit a5cf782c67be7b2609f206be64d43543217a6abe[m
+Author: Vivek Vinushanth Christopher <cvivekvinushanth@gmail.com>
+Date:   Thu Sep 15 14:05:00 2022 +0530
+
+    Use retrieval client for configs
+
+[33mcommit baf0d5b9f0c87ed4664f319e2d016635e4938058[m
+Author: Vivek Vinushanth Christopher <cvivekvinushanth@gmail.com>
+Date:   Wed Sep 14 23:46:50 2022 +0530
+
+    Use retrieval client for configs
+
+[33mcommit 667bbf67ccec64726de4d45b26519cfbec3e78ea[m
+Merge: 434a16012c 7b77aa54ef
+Author: Omal Vindula <42619922+DonOmalVindula@users.noreply.github.com>
+Date:   Fri Apr 21 13:15:19 2023 +0530
+
+    Merge pull request #3890 from DonOmalVindula/fix/16093
+    
+    Add magic link as the first step for TOTP
+
+[33mcommit 7b77aa54eff25619db67a0a24b54d743af3d86bb[m
+Author: DonOmalVindula <omalvindula@live.com>
+Date:   Fri Apr 21 12:42:12 2023 +0530
+
+    Add magic link as the first step for TOTP
+
+[33mcommit 434a16012cfe438946e266deb3f96411de069844[m
+Merge: e899cd3f02 4e87441d4a
+Author: Brion Mario <info@brionmario.com>
+Date:   Fri Apr 21 09:43:19 2023 +0530
+
+    Merge pull request #3807 from brionmario/feat-myaccount-branding-groundwork
+    
+    Add support for My Account Branding
+
+[33mcommit 4e87441d4a0a7428865a60fd33de115d82ccdc5d[m
+Author: Brion <info@brionmario.com>
+Date:   Thu Apr 20 17:01:04 2023 +0530
+
+    Fix ESLint issues
+
+[33mcommit d79264cd3acb86035bd3d867892761f04941db5d[m
+Author: Brion <info@brionmario.com>
+Date:   Thu Apr 20 16:32:28 2023 +0530
+
+    Fix ESLint issues
+
+[33mcommit b5e1770bc2c6d2e813ade315323f113b0f1ae562[m
+Author: Brion <info@brionmario.com>
+Date:   Thu Apr 20 16:08:14 2023 +0530
+
+    Use `ThunkDispatch`
+
+[33mcommit 90189fabc2758b1b682f15352535e445eb9c7494[m
+Author: Brion <info@brionmario.com>
+Date:   Thu Apr 20 16:03:42 2023 +0530
+
+    Update lock file
+
+[33mcommit 0ff74c1edd8a32b9fc397cc57f672e3b660fe3a0[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Apr 19 00:00:00 2023 +0530
+
+    Update migrations
+
+[33mcommit d8b3923535139f7ad502942b115a0fe59bd81bd2[m
+Author: Brion <info@brionmario.com>
+Date:   Tue Apr 18 18:48:42 2023 +0530
+
+    Update skeleton
+
+[33mcommit ca1c84eecd163f0dcb76af434b7719482d0058d5[m
+Author: Brion <info@brionmario.com>
+Date:   Tue Apr 18 15:24:32 2023 +0530
+
+    Update theme
+
+[33mcommit 6afccbdd9712b838769c02aa89f1f829aa2d3d1f[m
+Author: Brion <info@brionmario.com>
+Date:   Tue Apr 18 15:16:20 2023 +0530
+
+    Fix types
+
+[33mcommit e899cd3f02ad82810043d1e81540a3049c4facc0[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Tue Apr 18 03:52:16 2023 +0000
+
+    [WSO2 Release][Jenkins #5161]  [Release 1.6.301]  update package versions
+
+[33mcommit b5c7af9fcc3fed154c231f67c711d56f11beb924[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Tue Apr 18 03:40:37 2023 +0000
+
+    [WSO2 Release] [Jenkins #5161] [Release 1.6.301] prepare for next development iteration
+
+[33mcommit 2202d22786cbb05126fc1e3f1eb6c98032e3b36d[m[33m ([m[1;33mtag: v1.6.301[m[33m)[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Tue Apr 18 03:40:34 2023 +0000
+
+    [WSO2 Release] [Jenkins #5161] [Release 1.6.301] prepare release v1.6.301
+
+[33mcommit daced8257d3f36bc8e834588b786f30d0d2372ed[m
+Merge: e40eb61538 979af31be9
+Author: Sachini <swettasinghe23@gmail.com>
+Date:   Tue Apr 18 08:54:43 2023 +0530
+
+    Merge pull request #3885 from mpmadhavig/fix-self-registration-resend-email-for-tenants-issue
+    
+    Set tenant domain for untenanted usernames in resend email flow
+
+[33mcommit 4ba6324a67f24607b249b5809fc7c037e8ccbe3a[m
+Author: Brion <info@brionmario.com>
+Date:   Tue Apr 18 00:12:44 2023 +0530
+
+    Refactor meta
+
+[33mcommit f5e4aa0f8caaef05a3c3d0dde395c07965119173[m
+Author: Brion <info@brionmario.com>
+Date:   Tue Apr 18 00:10:21 2023 +0530
+
+    My Account branding core
+
+[33mcommit 471f5f90c4cd89d5f24a19ec17d1b19b483b8a5e[m
+Author: Brion <info@brionmario.com>
+Date:   Mon Apr 17 22:57:39 2023 +0530
+
+    Add `useRequest
+
+[33mcommit be1e24459a3f8b96c392acc4af3f08cd0806c5b7[m
+Author: Brion <info@brionmario.com>
+Date:   Mon Apr 17 22:34:21 2023 +0530
+
+    Refactor My Account illustrations
+
+[33mcommit 0ad936ebf1e751b31ca5d847418b0607c68cced0[m
+Author: Brion <info@brionmario.com>
+Date:   Mon Apr 17 22:25:13 2023 +0530
+
+    Fix two tone icons
+
+[33mcommit 8890ebc5fabd61261a227bcc2b4606ddb7ca1ce3[m
+Author: Brion <info@brionmario.com>
+Date:   Mon Apr 17 22:21:54 2023 +0530
+
+    Style changed provisioning My Account branding
+
+[33mcommit ecf7fc0a2db7cf677e394b8b325f8f9df80f2011[m
+Author: Brion <info@brionmario.com>
+Date:   Mon Apr 17 22:18:29 2023 +0530
+
+    Update icon styles
+
+[33mcommit 612875d84ba57ddaad99c471c7a8b6a4dec82c13[m
+Author: Brion <info@brionmario.com>
+Date:   Mon Apr 17 22:16:51 2023 +0530
+
+    Refactor My Account to accomodate branding
+
+[33mcommit 5307a3a4810328f489810aefb42cd882a8ebf4ab[m
+Author: Brion <info@brionmario.com>
+Date:   Mon Apr 3 19:24:44 2023 +0530
+
+    Fix `react-helmet` issue
+
+[33mcommit 43a29a2214dd402ad69e308cbe9a5fe210005312[m
+Author: Brion <info@brionmario.com>
+Date:   Mon Apr 3 19:23:00 2023 +0530
+
+    Add `relaxed` option to `ImagePreview`
+
+[33mcommit be055989dab0d4ec5912df3a002650fd975882b8[m
+Author: Brion <info@brionmario.com>
+Date:   Mon Apr 3 19:22:32 2023 +0530
+
+    Extend logo component
+
+[33mcommit c283c9111563cd7f2986d0127f647fe35bf97fdc[m
+Author: Brion <info@brionmario.com>
+Date:   Mon Apr 3 19:21:29 2023 +0530
+
+    Add `max_line_length` to `.editorconfig`
+
+[33mcommit b4a698fabea4d77456417c7fe24c7d8d993a4b7f[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Mar 15 18:18:38 2023 +0530
+
+    Add classname for advance search clear icon
+
+[33mcommit 6bd810f61aa3d9936b65a70619dc17ae986b2e54[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Mar 15 18:05:25 2023 +0530
+
+    Fix type issue
+
+[33mcommit a32c69b553d289673b36224bd700783700d87159[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Mar 15 17:20:35 2023 +0530
+
+    Update content suspense loader
+
+[33mcommit 6ea5ea06673f12e8d9d1997af01f95298dd5be44[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Mar 15 17:18:39 2023 +0530
+
+    Add `swr` dependency
+
+[33mcommit d83c04e85b3d83da5cf7bf9f48ea0a71c99c396e[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Mar 15 17:15:58 2023 +0530
+
+    Remove `useClickOutside` hook
+
+[33mcommit c1cfb52e78e48c787c6b4f4ea42164ac4709d23e[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Mar 15 17:14:26 2023 +0530
+
+    Add `DEFAULT_FALLBACK_LANGUAGE` const
+
+[33mcommit eb2807eb25993b382b87a44b78e53b691e1aab8b[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Mar 15 17:13:56 2023 +0530
+
+    Add `useGetBrandingPreference` hook
+
+[33mcommit ef9626e4eff05c37628cbd2da5a74f24f1d4c4cc[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Mar 15 14:46:59 2023 +0530
+
+    Make TOTP error message `error` type
+
+[33mcommit c4d10bc0ed659cfdc9f5a8e9040a0aeeda409f54[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Mar 15 14:46:19 2023 +0530
+
+    Add extension button class
+
+[33mcommit 7dd306ebcc7b43d6fefd8093889a279d010e956d[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Mar 15 14:43:36 2023 +0530
+
+    Make illustrations two tone
+
+[33mcommit 0c7ddd88382518b34d1fdc440f9fd3a2583c2767[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Mar 15 14:39:59 2023 +0530
+
+    Add classname for `placeholder-container`
+
+[33mcommit 1fa3d6e5b7c5687061ed57a0122c6bf338667c65[m
+Author: Brion <info@brionmario.com>
+Date:   Fri Mar 3 14:32:33 2023 +0530
+
+    Add initial theme skeleton
+
+[33mcommit f913566ae7ed0270cc3ce3472720f9ae4aa4fc66[m
+Author: Brion <info@brionmario.com>
+Date:   Wed Feb 22 13:41:01 2023 +0530
+
+    Add `Branding Preference` models
+
+[33mcommit 979af31be91f5cc20ecf6191f55ea7045596a3f6[m
+Author: mpmadhavig <madhavi.17@cse.mrt.ac.lk>
+Date:   Mon Apr 17 15:26:55 2023 +0530
+
+    Set tenant domain for untenanted usernames in resend email flow
+
+[33mcommit e40eb615389d1779a78773ffe4f5e4be8f1cb366[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Mon Apr 17 08:36:43 2023 +0000
+
+    [WSO2 Release][Jenkins #5159]  [Release 1.6.300]  update package versions
+
+[33mcommit 4a2c9b2ff93ff35e18f846f6a56992432090e81f[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Mon Apr 17 08:24:43 2023 +0000
+
+    [WSO2 Release] [Jenkins #5159] [Release 1.6.300] prepare for next development iteration
+
+[33mcommit 7b3af7037d0d563024fa600e0b962542cc82365d[m[33m ([m[1;33mtag: v1.6.300[m[33m)[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Mon Apr 17 08:24:40 2023 +0000
+
+    [WSO2 Release] [Jenkins #5159] [Release 1.6.300] prepare release v1.6.300
+
+[33mcommit a365ba15a75855e6ecf2122107659eaf7049449b[m
+Merge: e02508df37 826f164e1b
+Author: Jayashakthi Perera <jayashakthiperera@gmail.com>
+Date:   Mon Apr 17 13:40:40 2023 +0530
+
+    Merge pull request #3884 from JayaShakthi97/loading-fix-unify
+    
+    Fix organizations page UI loading inconsistency
+
+[33mcommit 826f164e1b3a2fce61918bb4530a996103479a2b[m
+Author: JayaShakthi97 <jayashakthiperera@gmail.com>
+Date:   Mon Apr 17 10:20:21 2023 +0530
+
+    Fix organizations page UI loading inconsistency
+
+[33mcommit e02508df37bfa9fac0bc7523fd5258c497431259[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Wed Apr 12 14:40:03 2023 +0000
+
+    [WSO2 Release][Jenkins #5157]  [Release 1.6.299]  update package versions
+
+[33mcommit b59124b7327ad714634cf1485fef34f8f8d5c7e9[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Wed Apr 12 14:28:16 2023 +0000
+
+    [WSO2 Release] [Jenkins #5157] [Release 1.6.299] prepare for next development iteration
+
+[33mcommit 7193420709393703d28734afb18796f75d655a81[m[33m ([m[1;33mtag: v1.6.299[m[33m)[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Wed Apr 12 14:28:13 2023 +0000
+
+    [WSO2 Release] [Jenkins #5157] [Release 1.6.299] prepare release v1.6.299
+
+[33mcommit 2dd16563c9e5ab5accb46436a391085e358ba5b9[m
+Merge: 78e16f67f6 389e82f9d4
+Author: Jayashakthi Perera <jayashakthiperera@gmail.com>
+Date:   Wed Apr 12 19:45:06 2023 +0530
+
+    Merge pull request #3883 from JayaShakthi97/fix-lint-issues
+    
+    Add null check to username validation functions
+
+[33mcommit 389e82f9d4d6b832d9a7f5ecbaac8d817403751f[m
+Author: JayaShakthi97 <jayashakthiperera@gmail.com>
+Date:   Wed Apr 12 19:07:26 2023 +0530
+
+    Fix formatting issue
+
+[33mcommit f56dfc1ac0fd941a682d8bb4d5785dc1ee42fc67[m
+Author: JayaShakthi97 <jayashakthiperera@gmail.com>
+Date:   Wed Apr 12 19:03:35 2023 +0530
+
+    Add null check to username validation functions
+
+[33mcommit 78e16f67f668e6149bc47b2a17c03fccdea06da8[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Wed Apr 12 12:48:10 2023 +0000
+
+    [WSO2 Release][Jenkins #5155]  [Release 1.6.298]  update package versions
+
+[33mcommit 04c0794cbf1a3553f2e93491203a1463e778936a[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Wed Apr 12 12:35:50 2023 +0000
+
+    [WSO2 Release] [Jenkins #5155] [Release 1.6.298] prepare for next development iteration
+
+[33mcommit 139a2d0a6df35738e74d9cb962d31e7a7d838c32[m[33m ([m[1;33mtag: v1.6.298[m[33m)[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Wed Apr 12 12:35:47 2023 +0000
+
+    [WSO2 Release] [Jenkins #5155] [Release 1.6.298] prepare release v1.6.298
+
+[33mcommit 97f34ecfd6f663142194b5be9573b3845404cb0e[m
+Merge: b51f02f9bb 59235e3c84
+Author: Jayashakthi Perera <jayashakthiperera@gmail.com>
+Date:   Wed Apr 12 17:40:53 2023 +0530
+
+    Merge pull request #3882 from JayaShakthi97/fix-lint-issues
+    
+    Fix ESLint issues
+
+[33mcommit 59235e3c84d62383905a63798704b6d1ae5bad94[m
+Author: JayaShakthi97 <jayashakthiperera@gmail.com>
+Date:   Wed Apr 12 17:04:17 2023 +0530
+
+    Fix ESLint issues
+
+[33mcommit b51f02f9bb44740671aa0335ee3e36b791ec9fde[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Wed Apr 12 10:04:40 2023 +0000
+
+    [WSO2 Release][Jenkins #5153]  [Release 1.6.297]  update package versions
+
+[33mcommit 5995fd28ed69f1f445b3cde4e0db6a17315f3983[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Wed Apr 12 09:52:45 2023 +0000
+
+    [maven-release-plugin] prepare for next development iteration
+
+[33mcommit 356c6baa8035a6d4498013e941aaa5a9f42e3d58[m[33m ([m[1;33mtag: v1.6.297[m[33m)[m
+Author: WSO2 Builder <jenkins-bot@wso2.com>
+Date:   Wed Apr 12 09:52:42 2023 +0000
+
+    [maven-release-plugin] prepare release v1.6.297
+
+[33mcommit b767a8b1da209413f8daf5805e3bf64f8974f2c7[m
+Merge: d87c198378 f214c28619
+Author: Kanapriya <Kanapriya@users.noreply.github.com>
+Date:   Wed Apr 12 10:51:34 2023 +0530
+
+    Merge pull request #3881 from Kanapriya/add_recpatcha
+    
+    Add missing imports to identity-apps repo
